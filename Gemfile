@@ -19,6 +19,8 @@ gem "jbuilder"
 gem "devise"
 gem "sidekiq"
 gem "redis"
+# Rails 8.1 still calls JSON.parse(str, opts); json 3 only takes keywords
+gem "json", "~> 2.15"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
