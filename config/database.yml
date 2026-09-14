@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: 5
+
+development:
+  <<: *default
+  database: bus_booking
+
+test:
+  <<: *default
+  database: bus_booking_test
+
+production:
+  <<: *default
+  database: bus_booking
+  username: <%= ENV["PGUSER"] %>
+  password: <%= ENV["PGPASSWORD"] %>
