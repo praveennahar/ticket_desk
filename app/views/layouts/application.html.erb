@@ -15,7 +15,7 @@
       <nav>
         <%= link_to "search", trips_path %>
         <% if user_signed_in? %>
-          <%= link_to "my tickets", tickets_path %>
+          <%= link_to "my bookings", bookings_path %>
           <%= button_to "log out", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "ghost" %>
         <% else %>
           <%= link_to "log in", new_user_session_path %>
