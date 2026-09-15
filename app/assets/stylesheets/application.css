@@ -6,7 +6,7 @@
   --card: #fff;
   --ok: #166534;
   --bad: #9f1239;
-  --pin: #a16207;
+  --held: #a16207;
 }
 
 * { box-sizing: border-box; }
@@ -60,14 +60,14 @@ button.ghost, a.ghost { background: transparent; color: var(--ink); border: 1px 
   gap: .5rem;
   margin: 1rem 0;
 }
-.spot {
+.seat-cell {
   border: 1px solid var(--line);
   padding: .55rem .4rem;
   text-align: center;
   background: #fff;
 }
-.spot.free { cursor: pointer; }
-.spot.pinned { background: #fef3c7; color: var(--pin); }
-.spot.sold { background: #e7e5e4; color: var(--muted); pointer-events: none; }
-.spot input { margin-bottom: .25rem; }
+.seat-cell.available { cursor: pointer; }
+.seat-cell.held { background: #fef3c7; color: var(--held); }
+.seat-cell.booked { background: #e7e5e4; color: var(--muted); pointer-events: none; }
+.seat-cell input { margin-bottom: .25rem; }
 .timer { font-size: 1.4rem; }

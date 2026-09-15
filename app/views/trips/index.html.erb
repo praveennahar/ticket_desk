@@ -1,0 +1,63 @@
+<% content_for :title, "Find a bus" %>
+<h1>Find a bus</h1>
+
+<%= form_with url: trips_path, method: :get, class: "filters" do %>
+  <div>
+    <label>From</label>
+    <%= text_field_tag :from, @from, placeholder: "Pune" %>
+  </div>
+  <div>
+    <label>To</label>
+    <%= text_field_tag :to, @to, placeholder: "Mumbai" %>
+  </div>
+  <div>
+    <label>Date</label>
+    <%= date_field_tag :on, @on %>
+  </div>
+  <div>
+    <label>Min operator rating</label>
+    <%= number_field_tag :min_rating, params[:min_rating], step: 0.1, min: 0, max: 5 %>
+  </div>
+  <div>
+    <label>Price from</label>
+    <%= number_field_tag :min_price, params[:min_price] %>
+  </div>
+  <div>
+    <label>Price up to</label>
+    <%= number_field_tag :max_price, params[:max_price] %>
+  </div>
+  <div>
+    <label>AC</label>
+    <%= select_tag :ac_type, options_for_select([["any", ""], ["Non-AC", "non_ac"], ["AC", "ac"]], params[:ac_type]) %>
+  </div>
+  <div>
+    <label>Layout</label>
+    <%= select_tag :layout_type, options_for_select([["any", ""], ["Seater", "seater"], ["Sleeper", "sleeper"]], params[:layout_type]) %>
+  </div>
+  <div>
+    <label>Amenity</label>
+    <%= select_tag :amenity, options_for_select([["any", ""]] + Amenity.order(:name).pluck(:name, :name), params[:amenity]) %>
+  </div>
+  <%= submit_tag "search" %>
+<% end %>
+
+<% if @from && @to && @on && @trips.empty? %>
+  <p class="meta">nothing on that date. try Pune → Mumbai.</p>
+<% end %>
+
+<% @trips.each do |trip| %>
+  <article class="card">
+    <h2><%= trip.bus.operator.name %> <span class="meta"><%= trip.bus.operator.rating %>★</span></h2>
+    <p>
+      <%= trip.origin %> → <%= trip.destination %>
+      · <%= trip.depart_at.strftime("%d %b, %H:%M") %>
+      · <%= bus_tag(trip.bus) %>
+    </p>
+    <p class="meta">
+      <%= rupees(trip.min_fare) %>–<%= rupees(trip.max_fare) %>
+      · <%= trip.available_seats %> open
+      · <%= trip.bus.amenities.map(&:name).join(", ") %>
+    </p>
+    <%= link_to "seats", trip_path(trip), class: "btn" %>
+  </article>
+<% end %>
