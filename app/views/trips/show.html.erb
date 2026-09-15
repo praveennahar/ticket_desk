@@ -1,0 +1,27 @@
+<% content_for :title, "#{@trip.origin} to #{@trip.destination}" %>
+<h1><%= @trip.bus.operator.name %></h1>
+<p class="meta">
+  <%= @trip.origin %> → <%= @trip.destination %>
+  · <%= @trip.depart_at.strftime("%d %b %Y, %H:%M") %>
+  · <%= bus_tag(@trip.bus) %>
+  · <%= @trip.bus.amenities.map(&:name).join(", ") %>
+</p>
+
+<%= form_with url: trip_holds_path(@trip), method: :post do %>
+  <div class="grid">
+    <% @trip_seats.each do |trip_seat| %>
+      <label class="seat-cell <%= trip_seat.state %>">
+        <% if trip_seat.available? %>
+          <%= check_box_tag "seat_ids[]", trip_seat.id, false, id: "seat_#{trip_seat.id}" %>
+        <% end %>
+        <div><strong><%= trip_seat.seat.number %></strong></div>
+        <div class="meta"><%= trip_seat.seat.kind %> · <%= rupees(trip_seat.fare) %></div>
+      </label>
+    <% end %>
+  </div>
+  <% if user_signed_in? %>
+    <%= submit_tag "hold seats (5 min)" %>
+  <% else %>
+    <p><%= link_to "log in to pick seats", new_user_session_path %></p>
+  <% end %>
+<% end %>
