@@ -1,0 +1,22 @@
+<% content_for :title, @booking.pnr %>
+<h1><%= @booking.pnr %></h1>
+<p class="meta"><%= @booking.state %> · <%= rupees(@booking.total) %></p>
+<p>
+  <%= @booking.trip.origin %> → <%= @booking.trip.destination %>
+  · <%= @booking.trip.depart_at.strftime("%d %b %Y, %H:%M") %>
+  · <%= @booking.trip.bus.operator.name %>
+</p>
+<ul>
+  <% @trip_seats.each do |trip_seat| %>
+    <li><%= trip_seat.seat.number %> · <%= rupees(trip_seat.fare) %></li>
+  <% end %>
+</ul>
+
+<% if @booking.cancelled? %>
+  <p>refund <%= rupees(@booking.refund) %></p>
+<% end %>
+
+<% if @booking.can_cancel? %>
+  <%= button_to "cancel (Rs 50 fee)", cancel_booking_path(@booking.pnr), method: :post %>
+  <p><%= link_to "reschedule to another trip", reschedule_booking_path(@booking.pnr) %></p>
+<% end %>
