@@ -1,0 +1,39 @@
+<% content_for :title, "Reschedule #{@booking.pnr}" %>
+<h1>Reschedule <%= @booking.pnr %></h1>
+<p class="meta">same route, same operator. pick a trip and seats.</p>
+
+<%= form_with url: reschedule_booking_path(@booking.pnr), method: :get, class: "filters" do %>
+  <label>Date</label>
+  <%= date_field_tag :on, params[:on] || @booking.trip.depart_at.to_date %>
+  <%= submit_tag "show trips" %>
+<% end %>
+
+<% @trips.each do |trip| %>
+  <article class="card">
+    <p>
+      <%= trip.depart_at.strftime("%d %b, %H:%M") %>
+      · <%= rupees(trip.min_fare) %>–<%= rupees(trip.max_fare) %>
+      · <%= trip.available_seats %> open
+    </p>
+    <%= link_to "pick seats", reschedule_booking_path(@booking.pnr, trip_id: trip.id, on: params[:on]) %>
+  </article>
+<% end %>
+
+<% if @chosen_trip %>
+  <h2><%= @chosen_trip.depart_at.strftime("%d %b, %H:%M") %></h2>
+  <%= form_with url: reschedule_booking_path(@booking.pnr), method: :post do %>
+    <%= hidden_field_tag :trip_id, @chosen_trip.id %>
+    <div class="grid">
+      <% @trip_seats.each do |trip_seat| %>
+        <label class="seat-cell <%= trip_seat.state %>">
+          <% if trip_seat.available? %>
+            <%= check_box_tag "seat_ids[]", trip_seat.id, false, id: "mv_#{trip_seat.id}" %>
+          <% end %>
+          <div><strong><%= trip_seat.seat.number %></strong></div>
+          <div class="meta"><%= rupees(trip_seat.fare) %></div>
+        </label>
+      <% end %>
+    </div>
+    <%= submit_tag "reschedule booking" %>
+  <% end %>
+<% end %>
