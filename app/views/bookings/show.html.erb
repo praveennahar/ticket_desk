@@ -1,4 +1,6 @@
 <% content_for :title, @booking.pnr %>
+<%= link_to "← my bookings", bookings_path, class: "back" %>
+
 <h1><%= @booking.pnr %></h1>
 <p class="meta"><%= @booking.state %> · <%= rupees(@booking.total) %></p>
 <p>
@@ -17,6 +19,8 @@
 <% end %>
 
 <% if @booking.can_cancel? %>
-  <%= button_to "cancel (Rs 50 fee)", cancel_booking_path(@booking.pnr), method: :post %>
-  <p><%= link_to "reschedule to another trip", reschedule_booking_path(@booking.pnr) %></p>
+  <div class="actions">
+    <%= button_to "cancel (Rs 50 fee)", cancel_booking_path(@booking.pnr), method: :post, data: { turbo_confirm: "Cancel this booking? Refund is fare minus Rs 50." } %>
+    <%= link_to "reschedule to another trip", reschedule_booking_path(@booking.pnr) %>
+  </div>
 <% end %>

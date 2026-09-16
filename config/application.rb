@@ -18,7 +18,21 @@ require "action_cable/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Coachyard
+class CatchMissingPage
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, body = response = @app.call(env)
+    return response unless status == 404 && headers[ActionDispatch::Constants::X_CASCADE] == "pass"
+
+    body.close if body.respond_to?(:close)
+    ApplicationController.action(:not_found).call(env)
+  end
+end
+
+module TicketDesk
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
@@ -37,7 +51,14 @@ module Coachyard
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.generators.system_tests = nil
-    config.active_job.queue_adapter = :sidekiq
     config.time_zone = "Mumbai"
+    config.exceptions_app = ->(env) {
+      if env["PATH_INFO"] == "/404"
+        ApplicationController.action(:not_found).call(env)
+      else
+        ActionDispatch::PublicExceptions.new(Rails.public_path).call(env)
+      end
+    }
+    config.middleware.insert_after ActionDispatch::DebugExceptions, CatchMissingPage
   end
 end

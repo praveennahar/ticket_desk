@@ -5,14 +5,18 @@ default: &default
 
 development:
   <<: *default
-  database: bus_booking
+  database: ticket_desk
+  username: your_pg_username
+  password: your_pg_password
 
 test:
   <<: *default
-  database: bus_booking_test
+  database: ticket_desk_test
+  username: your_pg_username
+  password: your_pg_password
 
 production:
   <<: *default
-  database: bus_booking
+  database: ticket_desk
   username: <%= ENV["PGUSER"] %>
   password: <%= ENV["PGPASSWORD"] %>

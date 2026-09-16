@@ -1,12 +1,12 @@
 class HoldsController < ApplicationController
   def create
     trip = Trip.find_by(id: params[:trip_id])
-    return redirect_to trips_path unless trip
+    return redirect_to trips_path(helpers.keep_search) unless trip
 
     hold = CreateHold.run(current_user, trip, params[:seat_ids])
-    redirect_to hold_path(hold.token)
+    redirect_to hold_path(hold.token, helpers.keep_search)
   rescue CreateHold::Unavailable => e
-    redirect_to trip_path(trip), alert: e.message
+    redirect_to trip_path(trip, helpers.keep_search), alert: e.message
   end
 
   def show

@@ -4,11 +4,11 @@
 <%= form_with url: trips_path, method: :get, class: "filters" do %>
   <div>
     <label>From</label>
-    <%= text_field_tag :from, @from, placeholder: "Pune" %>
+    <%= select_tag :from, options_for_select(@cities, @from), prompt: "pick a city" %>
   </div>
   <div>
     <label>To</label>
-    <%= text_field_tag :to, @to, placeholder: "Mumbai" %>
+    <%= select_tag :to, options_for_select(@cities, @to), prompt: "pick a city" %>
   </div>
   <div>
     <label>Date</label>
@@ -34,19 +34,25 @@
     <label>Layout</label>
     <%= select_tag :layout_type, options_for_select([["any", ""], ["Seater", "seater"], ["Sleeper", "sleeper"]], params[:layout_type]) %>
   </div>
-  <div>
+  <div class="full">
     <label>Amenity</label>
     <%= select_tag :amenity, options_for_select([["any", ""]] + Amenity.order(:name).pluck(:name, :name), params[:amenity]) %>
   </div>
-  <%= submit_tag "search" %>
+  <div class="full">
+    <%= submit_tag "search" %>
+  </div>
 <% end %>
 
 <% if @from && @to && @on && @trips.empty? %>
-  <p class="meta">nothing on that date. try Pune → Mumbai.</p>
+  <p class="meta">no buses on that date for <%= @from %> → <%= @to %>.</p>
+<% elsif @trips.any? %>
+  <p class="meta"><%= @trips.size %> <%= @trips.size == 1 ? "trip" : "trips" %></p>
+<% else %>
+  <p class="meta">pick from and to, then search.</p>
 <% end %>
 
 <% @trips.each do |trip| %>
-  <article class="card">
+  <%= link_to trip_path(trip, keep_search), class: "card" do %>
     <h2><%= trip.bus.operator.name %> <span class="meta"><%= trip.bus.operator.rating %>★</span></h2>
     <p>
       <%= trip.origin %> → <%= trip.destination %>
@@ -58,6 +64,6 @@
       · <%= trip.available_seats %> open
       · <%= trip.bus.amenities.map(&:name).join(", ") %>
     </p>
-    <%= link_to "seats", trip_path(trip), class: "btn" %>
-  </article>
+    <span class="btn">pick seats</span>
+  <% end %>
 <% end %>

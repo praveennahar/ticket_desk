@@ -2,9 +2,10 @@ class TripsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
   def index
+    @cities = (Trip.scheduled.distinct.pluck(:origin) + Trip.scheduled.distinct.pluck(:destination)).uniq.sort
     @from = params[:from].presence
     @to = params[:to].presence
-    @on = params[:on].present? ? Date.parse(params[:on]) : nil
+    @on = params[:on].present? ? Date.parse(params[:on]) : Time.zone.today + 1
 
     if @from && @to && @on
       @trips = SearchTrips.run(

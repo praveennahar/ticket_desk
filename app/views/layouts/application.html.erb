@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Coachyard" %></title>
+    <title><%= content_for(:title) ? "#{content_for(:title)} · Ticket desk" : "Ticket desk" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -10,12 +10,13 @@
   </head>
   <body>
     <header class="top">
-      <strong><%= link_to "Coachyard", root_path %></strong>
+      <strong><%= link_to "Ticket desk", root_path %></strong>
       <span class="meta">bus tickets</span>
       <nav>
         <%= link_to "search", trips_path %>
         <% if user_signed_in? %>
           <%= link_to "my bookings", bookings_path %>
+          <%= link_to "jobs", sidekiq_web_path if current_user.admin? %>
           <%= button_to "log out", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "ghost" %>
         <% else %>
           <%= link_to "log in", new_user_session_path %>
@@ -26,6 +27,9 @@
     <main>
       <% if notice %><div class="flash notice"><%= notice %></div><% end %>
       <% if alert %><div class="flash alert"><%= alert %></div><% end %>
+      <% if devise_controller? %>
+        <%= link_to "← search", trips_path, class: "back" %>
+      <% end %>
       <%= yield %>
     </main>
   </body>

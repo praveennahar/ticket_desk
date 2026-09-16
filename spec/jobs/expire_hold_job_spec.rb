@@ -9,7 +9,7 @@ RSpec.describe ExpireHoldJob do
     hold = CreateHold.run(create(:user), trip, [trip_seat.id])
 
     travel_to hold.expires_at + 1.second do
-      described_class.perform_now(hold.id)
+      described_class.new.perform(hold.id)
     end
 
     expect(hold.reload).to be_expired
@@ -23,7 +23,7 @@ RSpec.describe ExpireHoldJob do
     trip_seat = trip.trip_seats.first
     hold = CreateHold.run(create(:user), trip, [trip_seat.id])
 
-    described_class.perform_now(hold.id)
+    described_class.new.perform(hold.id)
 
     expect(hold.reload).to be_active
     expect(trip_seat.reload).to be_held

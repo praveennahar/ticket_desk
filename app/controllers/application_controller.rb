@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!, unless: :devise_controller?
 
+  rescue_from ActionController::RoutingError, with: :not_found
+
   def after_sign_in_path_for(_resource)
     trips_path
   end

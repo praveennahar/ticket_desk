@@ -1,6 +1,10 @@
 <% content_for :title, "Hold #{@hold.token}" %>
+<%= link_to "← trip", trip_path(@hold.trip, keep_search), class: "back" %>
+
 <h1>Seats held</h1>
-<p class="timer">expires in <%= @hold.seconds_left %> sec</p>
+<p class="timer" data-controller="timer" data-timer-seconds-value="<%= @hold.seconds_left %>">
+  expires in <%= @hold.seconds_left %> sec
+</p>
 <p class="meta">hold <%= @hold.token %></p>
 
 <ul>
@@ -10,5 +14,7 @@
 </ul>
 <p><strong>total <%= rupees(@trip_seats.sum(&:fare)) %></strong></p>
 
-<%= button_to "confirm booking", hold_bookings_path(@hold.token), method: :post %>
-<p class="meta"><%= link_to "back to trip", trip_path(@hold.trip) %></p>
+<div class="actions">
+  <%= button_to "confirm booking", hold_bookings_path(@hold.token), method: :post %>
+  <%= link_to "← search", trips_path(keep_search), class: "back" %>
+</div>

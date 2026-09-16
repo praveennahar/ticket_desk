@@ -1,4 +1,6 @@
 <% content_for :title, "#{@trip.origin} to #{@trip.destination}" %>
+<%= link_to "← search", trips_path(keep_search), class: "back" %>
+
 <h1><%= @trip.bus.operator.name %></h1>
 <p class="meta">
   <%= @trip.origin %> → <%= @trip.destination %>
@@ -7,7 +9,11 @@
   · <%= @trip.bus.amenities.map(&:name).join(", ") %>
 </p>
 
-<%= form_with url: trip_holds_path(@trip), method: :post do %>
+<%= form_with url: trip_holds_path(@trip), method: :post, data: { controller: "seats", action: "change->seats#update submit->seats#requirePick" } do %>
+  <% keep_search.each do |key, value| %>
+    <%= hidden_field_tag key, value if value.present? %>
+  <% end %>
+  <p class="legend" data-seats-target="count">tick open seats. yellow is held, grey is booked.</p>
   <div class="grid">
     <% @trip_seats.each do |trip_seat| %>
       <label class="seat-cell <%= trip_seat.state %>">

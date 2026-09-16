@@ -18,7 +18,7 @@ class CreateHold
       trip.decrement!(:available_seats, trip_seats.size)
     end
 
-    ExpireHoldJob.set(wait_until: hold.expires_at).perform_later(hold.id)
+    ExpireHoldJob.perform_at(hold.expires_at, hold.id)
     trip.bump_search_cache
     hold
   end

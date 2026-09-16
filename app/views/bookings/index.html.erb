@@ -1,17 +1,19 @@
 <% content_for :title, "My bookings" %>
+<%= link_to "← search", trips_path, class: "back" %>
+
 <h1>My bookings</h1>
 
 <% if @bookings.empty? %>
   <p class="meta">none yet. <%= link_to "search buses", trips_path %></p>
 <% else %>
   <% @bookings.each do |booking| %>
-    <article class="card">
+    <%= link_to booking_path(booking.pnr), class: "card" do %>
       <p>
-        <%= link_to booking.pnr, booking_path(booking.pnr) %>
+        <%= booking.pnr %>
         · <%= booking.trip.origin %> → <%= booking.trip.destination %>
         · <%= booking.state %>
         · <%= rupees(booking.total) %>
       </p>
-    </article>
+    <% end %>
   <% end %>
 <% end %>

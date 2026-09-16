@@ -1,28 +1,39 @@
 <% content_for :title, "Reschedule #{@booking.pnr}" %>
+<% if @chosen_trip %>
+  <%= link_to "← other trips", reschedule_booking_path(@booking.pnr, on: params[:on]), class: "back" %>
+<% else %>
+  <%= link_to "← #{@booking.pnr}", booking_path(@booking.pnr), class: "back" %>
+<% end %>
+
 <h1>Reschedule <%= @booking.pnr %></h1>
 <p class="meta">same route, same operator. pick a trip and seats.</p>
 
 <%= form_with url: reschedule_booking_path(@booking.pnr), method: :get, class: "filters" do %>
-  <label>Date</label>
-  <%= date_field_tag :on, params[:on] || @booking.trip.depart_at.to_date %>
-  <%= submit_tag "show trips" %>
+  <div>
+    <label>Date</label>
+    <%= date_field_tag :on, params[:on] || @booking.trip.depart_at.to_date %>
+  </div>
+  <div class="full">
+    <%= submit_tag "show trips" %>
+  </div>
 <% end %>
 
 <% @trips.each do |trip| %>
-  <article class="card">
+  <%= link_to reschedule_booking_path(@booking.pnr, trip_id: trip.id, on: params[:on]), class: "card" do %>
     <p>
       <%= trip.depart_at.strftime("%d %b, %H:%M") %>
       · <%= rupees(trip.min_fare) %>–<%= rupees(trip.max_fare) %>
       · <%= trip.available_seats %> open
     </p>
-    <%= link_to "pick seats", reschedule_booking_path(@booking.pnr, trip_id: trip.id, on: params[:on]) %>
-  </article>
+    <span class="btn">pick seats</span>
+  <% end %>
 <% end %>
 
 <% if @chosen_trip %>
   <h2><%= @chosen_trip.depart_at.strftime("%d %b, %H:%M") %></h2>
-  <%= form_with url: reschedule_booking_path(@booking.pnr), method: :post do %>
+  <%= form_with url: reschedule_booking_path(@booking.pnr), method: :post, data: { controller: "seats", action: "change->seats#update submit->seats#requirePick" } do %>
     <%= hidden_field_tag :trip_id, @chosen_trip.id %>
+    <p class="legend" data-seats-target="count">tick open seats, then reschedule.</p>
     <div class="grid">
       <% @trip_seats.each do |trip_seat| %>
         <label class="seat-cell <%= trip_seat.state %>">
