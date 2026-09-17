@@ -4,6 +4,8 @@ A Rails 8 bus ticket booking app. A rider searches a city pair and date, holds s
 
 Holds are exclusive, confirm is idempotent, cancel takes a flat Rs 50 fee, and Sidekiq releases seats when a hold expires.
 
+For more detail on models, request flow, and each feature, check [docs/README.md](docs/README.md).
+
 ## What a rider can do
 
 1. **Search** (no login) — from, to, date, then optional filters: operator rating, price, AC / Non-AC, seater / sleeper, amenity (wifi, charging, blanket).
@@ -75,7 +77,7 @@ Operators: Surya Travels, Malabar Line, Greenline, Konkan Express.
 
 ## How the code is organised
 
-Business rules live in service objects, not fat controllers:
+Business rules live in service objects, not fat controllers. Check [docs/README.md](docs/README.md) for the longer notes.
 
 | Action | Service |
 |---|---|
