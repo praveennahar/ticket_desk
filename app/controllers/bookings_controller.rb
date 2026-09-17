@@ -38,7 +38,7 @@ class BookingsController < ApplicationController
       from: @booking.trip.origin,
       to: @booking.trip.destination,
       on: (params[:on].present? ? Date.parse(params[:on]) : @booking.trip.depart_at.to_date)
-    ).reject { |trip| trip.id == @booking.trip_id || trip.bus.operator_id != @booking.trip.bus.operator_id }
+    ).reject { |trip| trip.bus.operator_id != @booking.trip.bus.operator_id }
     @chosen_trip = Trip.find_by(id: params[:trip_id])
     @trip_seats = @chosen_trip.trip_seats.includes(:seat).order("seats.number") if @chosen_trip
   end
